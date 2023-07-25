@@ -1,0 +1,28 @@
+import requests
+from bs4 import BeautifulSoup
+
+url = "https://www.example.com"  # Replace with the URL of the website you want to scrape
+headers = {
+    "User-Agent": "Your-User-Agent-String"  # Replace with an appropriate User-Agent
+}
+response = requests.get(url, headers=headers)
+
+# Check if the request was successful (status code 200 means success)
+if response.status_code == 200:
+    # Parse the HTML content using BeautifulSoup
+    soup = BeautifulSoup(response.content, "html.parser")
+    # Now, you can use BeautifulSoup to navigate and search for elements on the page.
+else:
+    print("Failed to fetch the webpage:", response.status_code)
+
+
+# Example: Find all div elements with a specific class
+ad_containers = soup.find_all("div", class_="ad-container")
+
+# Iterate through the ad containers and extract relevant information
+for ad in ad_containers:
+    # Example: Extract the ad title and company name
+    ad_title = ad.find("h2", class_="ad-title").text
+    company_name = ad.find("span", class_="company-name").text
+
+    # Process and store the extracted information as needed
