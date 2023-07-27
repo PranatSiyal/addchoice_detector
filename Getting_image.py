@@ -8,9 +8,9 @@ driver = webdriver.Chrome()
 driver.maximize_window()
 driver.get("https://www.tmz.com/")
 
-section_one = driver.find_element(By.ID, "")
-section_one.screenshot("random.png")
-wait = WebDriverWait(driver, 20)
+section_one = driver.find_element(By.ID, "cbb")
+section_one.screenshot("adc.png")
+wait = WebDriverWait(driver, 60)
 
 try:
     # Wait for the element with ID "ad_unit" to be present, with a timeout of 20 seconds
