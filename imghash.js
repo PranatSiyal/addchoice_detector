@@ -4,7 +4,7 @@ import leven from "leven";
 async function compareImages() {
   try {
     const hash1 = await imghash.hash("oba_small.png");
-    const hash2 = await imghash.hash("random.png");
+    const hash2 = await imghash.hash("CNN/A-photo-of-a-person-tapping-on-a-smartphone-in-front-of-a-MacBook-with-dollar-signs-coming-out-from-the-phone.jpg");
 
     const distance = leven(hash1, hash2);
     console.log(`Distance between images is: ${distance}`);
