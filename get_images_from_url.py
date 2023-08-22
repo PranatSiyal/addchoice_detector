@@ -21,4 +21,4 @@ def imagedown(url, folder):
             f.write(im.content)
             print('Writing: ', name)
 
-imagedown('https://www.cnn.com/', 'CNN')
+imagedown('https://www.tmz.com/', 'tmz')
