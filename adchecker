@@ -1,3 +1,5 @@
+#finding all ads with class ad-container 
+
 import requests
 from bs4 import BeautifulSoup
 
