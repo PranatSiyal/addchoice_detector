@@ -1,11 +1,22 @@
 {
 
   "type": "module",
+
   "dependencies": {
+
     "canvas": "^2.11.2",
+
     "cheerio": "^1.0.0-rc.12",
+
+    "imagejs": "^0.0.9",
+
     "imghash": "^0.0.9",
+
     "leven": "^4.0.0",
+
     "node-fetch": "^3.3.1"
+
   }
+
 }
+

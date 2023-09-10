@@ -2,14 +2,14 @@ import cv2
 import numpy as np
 
 # Read the images
-image = cv2.imread("adv.png")
+image = cv2.imread("/Users/pranatsiyal/addchoice_detector/test_screenshots/output_image.png")
 template = cv2.imread("taboola.png")
 
 # Match the template within the image
-# result = cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
+#result = cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
 
 # # Find the best matching location
-# min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+#min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
 # # Get the top-left and bottom-right coordinates of the matching region
 # top_left = max_loc
@@ -24,7 +24,7 @@ template = cv2.imread("taboola.png")
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
 
-def find_image(im, tpl):
+def find_image(im, tpl, threshold=0.7):
     im = np.atleast_3d(im)
     tpl = np.atleast_3d(tpl)
     H, W, D = im.shape[:3]
@@ -46,3 +46,9 @@ def find_image(im, tpl):
             return (y+1, x+1)
 
     raise Exception("Image not found")
+try:
+    matched_location = find_image(image, template)
+    if matched_location:
+        print("Image Matched at location:", matched_location)
+except Exception as e:
+    print("Image Not Matched")
