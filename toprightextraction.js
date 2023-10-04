@@ -18,11 +18,11 @@ async function extractTopRight(imgPath) {
 (async () => {
   try {
 
-    const outputDirectory = "output_newyorker";
+    const outputDirectory = "output_cnn";
     await fs.promises.mkdir(outputDirectory, { recursive: true });
-    const imageFiles = await fs.promises.readdir("/Users/pranatsiyal/addchoice_detector/newyorker_screenshots");
+    const imageFiles = await fs.promises.readdir("/Users/pranatsiyal/addchoice_detector/cnn_screenshots");
     for (const imageFile of imageFiles) {
-        const imagePath = path.join("/Users/pranatsiyal/addchoice_detector/newyorker_screenshots", imageFile);
+        const imagePath = path.join("/Users/pranatsiyal/addchoice_detector/cnn_screenshots", imageFile);
   
         const extractedImage = await extractTopRight(imagePath);
   

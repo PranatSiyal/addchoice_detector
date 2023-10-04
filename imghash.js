@@ -7,11 +7,11 @@ async function compareImages() {
   try {
     const hash1 = await imghash.hash("output2_image.png");
     //const hash2 = await imghash.hash("CNN/A-photo-of-a-person-tapping-on-a-smartphone-in-front-of-a-MacBook-with-dollar-signs-coming-out-from-the-phone.jpg");
-    const imageFiles = await fs.readdir("/Users/pranatsiyal/addchoice_detector/output_newyorker");
+    const imageFiles = await fs.readdir("/Users/pranatsiyal/addchoice_detector/output_cnn");
     var count_P = 0
     var count_N = 0
     for (const imageFile of imageFiles) {
-        const image2Path = path.join("/Users/pranatsiyal/addchoice_detector/output_newyorker", imageFile);
+        const image2Path = path.join("/Users/pranatsiyal/addchoice_detector/output_cnn", imageFile);
         //const extractedImage = await extractTopRight(image2Path);
         //const extractedImageHash = await imghash.hashBuffer(extractedImageBuffer);
 

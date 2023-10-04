@@ -34,8 +34,8 @@ def capture_screenshots(url, folder, output_txt):
     
     # scroll_script = "window.scrollTo(0, document.body.scrollHeight);"
     # driver.execute_script(scroll_script)
-    scroll_step = 100  # Adjust this value as needed
-    scroll_interval = 0.2
+    scroll_step = 300  # Adjust this value as needed
+    scroll_interval = 0.1
     document_height = driver.execute_script("return document.body.scrollHeight")
 
 # Scroll through the page using smooth scrolling
@@ -106,6 +106,8 @@ def capture_screenshots(url, folder, output_txt):
                 processed_elements.add(bg_element_identifier)
         except StaleElementReferenceException:
             print("Stale element reference. Skipping...")
+        except NoSuchElementException:
+            print("No image or iframe elements found on the page.")
         shadow_dom_elements = driver.find_element(By.CSS_SELECTOR, 'div')
     
     # for shadow_dom_element in shadow_dom_elements:
@@ -174,4 +176,4 @@ def capture_screenshots(url, folder, output_txt):
             txt_file.write(f"Source URL: {src}, Type: {src_type}\n")
 
 
-capture_screenshots("https://www.cnn.com/", 'cnn_screenshots','image_sources.txt')    
+capture_screenshots("https://www.tmz.com", 'tmz_screenshots','tmz_image_sources.txt')    
