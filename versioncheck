@@ -1,0 +1,3 @@
+import selenium
+# Print the WebDriver version
+print("Selenium WebDriver version:", selenium.__version__)
