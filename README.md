@@ -11,7 +11,7 @@ We try to combine both the methods to collect close to 100% advertisement displa
   - form selenium import webdriver
   - pip install numpy
 ### Usage
-Used to scrape images/ iframes and background and their urls from a website.
+Used to scrape images/ iframes and background and their urls from a website. <br />
 **All_iamge_SC.py** - main function which executes both the methods concurrently.<br />
 **get_image_from_the_url.py** - get images,ifrmaes and background images from website while storing their urls seperately. <br />
 **Image_matchinhg using Opencv** - match the image obtained from scrapping the given url with adchoice logo using opencv, can be done using template matching.Note that the code uses pixel-wise comparisons for template matching, which may be sensitive to slight variations and noise in the images.<br />
