@@ -10,29 +10,16 @@ from PIL import Image
 from io import BytesIO
 import numpy as np
 import os
-def capture_imgSC(url, folder, output_txt):
+
+def capture_imgSC(url, folder, output_txt, driver):
     try:
         os.mkdir(os.path.join(os.getcwd(), folder))
-    except: 
+    except FileExistsError: 
         pass
     
-    # Specify the path to the ChromeDriver executable
-    #desired_version = "116.0.5845.96"
-    # service = Service(ChromeDriverManager().install())
-    #service = Service(ChromeDriverManager(desired_version).install())
-    # Create ChromeOptions and set the binary location
-    options = webdriver.ChromeOptions()
-    #options.binary_location = "/Users/pranatsiyal/Downloads/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
-    #options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome( options=options)
-     
-    # Navigate to the URL
     driver.get(url)
     
-    # Wait for the page to load (increase this time as needed)
-    time.sleep(1)  # Wait for 5 seconds (adjust as needed)
+    time.sleep(1)  
     try:
         # Capture screenshots of each image in <img> tags
         image_elements = driver.find_elements(By.TAG_NAME, 'img')
@@ -48,12 +35,10 @@ def capture_imgSC(url, folder, output_txt):
     processed_elements = set()
     image_sources_dict = {}
     for idx, (element, bg_element) in enumerate(zip(image_elements + iframe_elements + gwd_elements, div_elements + a_elements)):
-    #for idx, element in enumerate(iframe_elements + image_elements + gwd_elements, div_elements + a_elements ):
+
         #loop over iframe 
-        #switch to iframe and screenshot img/iframe tags from the iframe/image
         try:
-            #element = driver.find_elements(By.TAG_NAME, element.tag_name)[idx]
-            #background_image = div_element.value_of_css_property('background-image')
+
             width = element.size['width']
             height = element.size['height']
             
@@ -82,38 +67,25 @@ def capture_imgSC(url, folder, output_txt):
                 img_src = bg_element.get_attribute("src")
                 print(f"background Image source (src): {img_src}")
                 #Add image element source to the dictionary
-                image_sources_dict[img_src] = screenshot_path
+                image_sources_dict[img_src] = bg_screenshot_path
                 processed_elements.add(bg_element_identifier)
         except StaleElementReferenceException:
             print("Stale element reference. Skipping...")
         except NoSuchElementException:
             print("No image or iframe elements found on the page.")
-        shadow_dom_elements = driver.find_element(By.CSS_SELECTOR, 'div')
+        
 
-    driver.quit()
+
     output_txt = os.path.join(os.getcwd(), output_txt)
-    with open(output_txt, 'w') as txt_file:
+    with open(output_txt, 'a') as txt_file:
         for src, src_type in image_sources_dict.items():
             txt_file.write(f"Source URL: {src}, Type: {src_type}\n")
 
 
 
-def capture_fullpageSC(url, output):
-    # Specify the path to the ChromeDriver executable
-    # desired_version = "116.0.5845.96"
-    # service = Service(ChromeDriverManager().install())
-    # service = Service(ChromeDriverManager(desired_version).install())
-    # Create ChromeOptions and set the binary location
-    options = webdriver.ChromeOptions()
-    # options.binary_location = "/Users/pranatsiyal/Downloads/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
-    #options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome(options=options)
+def capture_fullpageSC(url, output, driver):
         
     driver.get(url)
-    #document_height = driver.execute_script("return document.body.scrollHeight")
-    # document_height = driver.execute_script("return Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight );")
     initial_height = driver.execute_script('return document.documentElement.scrollHeight')
     initial_width  = driver.execute_script('return document.documentElement.scrollWidth')
 
@@ -127,7 +99,7 @@ def capture_fullpageSC(url, output):
     current_scroll = 0
     screenshot_count = 1
     while current_scroll < scroll_height:
-
+        time.sleep(1)  
         driver.execute_script(f"window.scrollTo(0, {current_scroll});")
 
         driver.save_screenshot(f"screenshot{str(screenshot_count)}.png")
@@ -135,7 +107,7 @@ def capture_fullpageSC(url, output):
         current_scroll += scroll_step
 
     # Close the WebDriver
-    driver.quit()
+
 
     screenshot_directory = os.getcwd()
     screenshot_files = [f for f in os.listdir(screenshot_directory) if f.startswith("screenshot")]
@@ -172,75 +144,46 @@ def capture_fullpageSC(url, output):
     # Optionally, you can delete the individual screenshot files
     for screenshot_file in screenshot_files:
         os.remove(os.path.join(screenshot_directory, screenshot_file))
-    # folder = 'fullpageSC'
-    # print(height)
-    # os.mkdir(os.path.join(os.getcwd(), folder))
-    # # Scroll through the page using smooth scrolling
-    # current_position = 0
-    # scroll_position = 0
-    # while current_position < document_height:
-    #     current_position += 800
-    #     time.sleep(scroll_interval)
-    # driver.quit()
-capture_fullpageSC("https://www.cnn.com", "CNNfullpage.png")
 
-capture_imgSC("https://www.cnn.com", 'cnn_screenshots','cnn_image_sources.txt')    
+# capture_fullpageSC("https://www.cnn.com", "CNNfullpage.png")
+
+# capture_imgSC("https://www.cnn.com", 'cnn_screenshots','cnn_image_sources.txt')    
 
 
-def capture_shadowdomSC(url, folder, output_txt):
+def capture_shadowdomSC(url, folder, output_txt, driver):
     try:
         os.mkdir(os.path.join(os.getcwd(), folder))
-    except: 
+    except FileExistsError:  
         pass
     
-    # Specify the path to the ChromeDriver executable
-    #desired_version = "116.0.5845.96"
-    # service = Service(ChromeDriverManager().install())
-    #service = Service(ChromeDriverManager(desired_version).install())
-    # Create ChromeOptions and set the binary location
-    options = webdriver.ChromeOptions()
-    #options.binary_location = "/Users/pranatsiyal/Downloads/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
-    #options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome( options=options)
-     
     # Navigate to the URL
     driver.get(url)
     
     # Wait for the page to load (increase this time as needed)
     time.sleep(1)  # Wait for 5 seconds (adjust as needed)
-    try:
-        # Capture screenshots of each image in <img> tags
-        image_elements = driver.find_elements(By.TAG_NAME, 'img')
-        iframe_elements = driver.find_elements(By.TAG_NAME, 'iframe')
-        div_elements = driver.find_elements(By.TAG_NAME, 'div')
-        a_elements = driver.find_elements(By.TAG_NAME, 'a')
-        gwd_elements  = driver.find_elements(By.TAG_NAME, 'gwd-image')
-
-    except NoSuchElementException:
-        print("No image or iframe elements found on the page.")
     
-    #keeping a set to keep track of elements looped to avoid duplicates
-    processed_elements = set()
+
     image_sources_dict = {}
     shadow_dom_elements = driver.find_element(By.CSS_SELECTOR, 'div')
-    
+
     for shadow_dom_element in shadow_dom_elements:
         # Open shadow DOM using JavaScript
         driver.execute_script("arguments[0].openShadowRoot();", shadow_dom_element)
         
         # Find all iframe elements within the shadow DOM
         if_elements = driver.find_elements(By.TAG_NAME, 'iframe')
+        # im_elements = driver.find_elements(By.TAG_NAME, 'img')
         try:
             
             for idx, iframe_element in enumerate(if_elements):
                 screenshot_path = os.path.join(folder, f"iframe_{idx}.png")
-                
+                img_src = iframe_element.get_attribute("src")
                 # Switch to the iframe and capture screenshot
                 driver.switch_to.frame(iframe_element)
                 driver.save_screenshot(screenshot_path)
                 print(f"Captured screenshot: {screenshot_path}")
+                # Adding image source to the dictionary
+                image_sources_dict[img_src] = screenshot_path
                 
                 # Switch back to the default content
                 driver.switch_to.default_content()
@@ -249,50 +192,37 @@ def capture_shadowdomSC(url, folder, output_txt):
              continue
         # Close the shadow DOM using JavaScript
         driver.execute_script("arguments[0].closeShadowRoot();", shadow_dom_element)
-    shadow_elements = []
-    element = driver.find_element(By.TAG_NAME, 'html')
-    stack = [element]
+    # shadow_elements = []
+    # element = driver.find_element(By.TAG_NAME, 'html')
+    # stack = [element]
 
-    while stack:
-        current_element = stack.pop()
-        shadow_root = driver.execute_script('return arguments[0].shadowRoot;', current_element)
+    # while stack:
+    #     current_element = stack.pop()
+    #     shadow_root = driver.execute_script('return arguments[0].shadowRoot;', current_element)
         
-        if shadow_root:
-            shadow_elements.append(shadow_root)
+    #     if shadow_root:
+    #         shadow_elements.append(shadow_root)
         
-        stack.extend(current_element.find_elements(By.TAG_NAME, '*'))
+    #     stack.extend(current_element.find_elements(By.TAG_NAME, '*'))
 
-    
-    driver.quit()
     output_txt = os.path.join(os.getcwd(), output_txt)
-    with open(output_txt, 'w') as txt_file:
+    with open(output_txt, 'a') as txt_file:
         for src, src_type in image_sources_dict.items():
             txt_file.write(f"Source URL: {src}, Type: {src_type}\n")
 
 
-def capture_iframeSC(url, folder, output_txt):
+def capture_iframeSC(url, folder, output_txt, driver):
     try:
         os.mkdir(os.path.join(os.getcwd(), folder))
-    except: 
+    except FileExistsError: 
         pass
     
-    # Specify the path to the ChromeDriver executable
-    #desired_version = "116.0.5845.96"
-    # service = Service(ChromeDriverManager().install())
-    #service = Service(ChromeDriverManager(desired_version).install())
-    # Create ChromeOptions and set the binary location
-    options = webdriver.ChromeOptions()
-    #options.binary_location = "/Users/pranatsiyal/Downloads/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
-    #options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome( options=options)
      
     # Navigate to the URL
     driver.get(url)
     
     # Wait for the page to load (increase this time as needed)
-    time.sleep(1)  # Wait for 5 seconds (adjust as needed)
+    time.sleep(1)  
     try:
         # Capture screenshots of each image in <img> tags
         iframe_elements = driver.find_elements(By.TAG_NAME, 'iframe')
@@ -325,22 +255,16 @@ def capture_iframeSC(url, folder, output_txt):
             continue
 
     # Close the WebDriver
-    driver.quit()
+
     output_txt = os.path.join(os.getcwd(), output_txt)
-    with open(output_txt, 'w') as txt_file:
+    with open(output_txt, 'a') as txt_file:
         for src, src_type in image_sources_dict.items():
             txt_file.write(f"Source URL: {src}, Type: {src_type}\n")
 
 
 # THIS IS HELPER FUNCTION FOR HAR CAPTURE METHOD
-def take_screenshot(url, output_file):
-    # Set up Chrome options for headless browsing
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--disable-gpu')
-    # Create a WebDriver instance
-    driver = webdriver.Chrome(options=chrome_options)
-
+def har_helper(url, output_file, driver):
+   
     try:
         driver.get(url)
         driver.save_screenshot(output_file)
@@ -374,38 +298,22 @@ def take_screenshot(url, output_file):
             return False
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-    finally:
-        driver.quit()
 
 
-def HAR_capture():
+
+def HAR_capture(url, driver, proxy, server):
     # Specify the directory to save screenshots
     SCREENSHOT_DIRECTORY = 'image_screenshots'
-
-    # Start BrowserMob Proxy server
-    server = Server("/Users/pranatsiyal/addchoice_detector/browsermob-proxy-2.1.4/bin/browsermob-proxy")
-    server.start()
-    proxy = server.create_proxy()
-
-    # Configure Chrome with proxy settings
-    chrome_options = Options()
-    chrome_options.add_argument("--proxy-server={}".format(proxy.proxy))
-    chrome_options.add_argument("--ignore-ssl-errors=yes")
-    chrome_options.add_argument("--ignore-certificate-errors")
-
-    # Launch the browser with configured proxy
-    driver = webdriver.Chrome(options=chrome_options)
 
     try:
         # Start capturing HTTP requests
         proxy.new_har("example", options={'captureHeaders': True, 'captureContent': True})
 
         # Open a website
-        driver.get("http://zdnet.com")
+        driver.get(url)
         time.sleep(15)  # Give the page some time to load
 
-        # Get the HAR data
-        # Get the captured network events
+        # Get the HAR data and captured network events
         har_entries = proxy.har['log']['entries']
 
         # Filter requests with mimeType containing "image"
@@ -421,12 +329,12 @@ def HAR_capture():
         screenshot_counter = 1
 
         # Save the image URLs to a text file
-        with open('image_urls.txt', 'w') as file:
+        with open('image_urls.txt', 'a') as file:
             for url in image_urls:
                 screenshot_filename = f"Image {screenshot_counter}.png"
                 screenshot_file = os.path.join(SCREENSHOT_DIRECTORY, screenshot_filename)
 
-                if take_screenshot(url, screenshot_file):
+                if har_helper(url, screenshot_file, driver):
                     file.write(url + '\n')
 
                 # Increment the screenshot counter
@@ -441,4 +349,37 @@ def HAR_capture():
         server.stop()
 
 # Call the function to execute the capture process
-HAR_capture()
+def main():
+    # Start BrowserMob Proxy server
+    server = Server("/Users/pranatsiyal/addchoice_detector/browsermob-proxy-2.1.4/bin/browsermob-proxy")
+    server.start()
+    proxy = server.create_proxy()
+
+    options = webdriver.ChromeOptions()
+    #options.binary_location = "/Users/pranatsiyal/Downloads/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+    #options.add_argument('--headless')
+    options.add_argument("--proxy-server={}".format(proxy.proxy))
+    options.add_argument("--ignore-ssl-errors=yes")
+    options.add_argument("--ignore-certificate-errors")
+
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    # Launch the browser with configured proxy
+    driver = webdriver.Chrome(options=options)
+
+    HAR_capture("https://www.cnn.com",driver, proxy, server)
+    capture_fullpageSC("https://www.cnn.com", "fullpageSC.png", driver)
+    capture_imgSC("https://www.cnn.com", "images", "output.txt", driver)
+
+    # capture_iframeSC("https://www.cnn.com", 'images', "output_txt", driver)
+
+    # capture_fullpageSC("https://www.cnn.com", "CNNfullpage.png", driver)
+
+    # capture_imgSC("https://www.cnn.com", 'cnn_screenshots','cnn_image_sources.txt', driver)   
+
+    # capture_shadowdomSC("https://www.cnn.com", 'cnn_screenshots_SD','cnn_image_sources_SD.txt', driver) 
+
+    # capture_iframeSC("https://www.cnn.com", 'cnn_screenshots_SD','cnn_image_sources_SD.txt', driver)
+
+    driver.quit()
+main()

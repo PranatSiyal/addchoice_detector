@@ -171,7 +171,7 @@ def capture_screenshots(url, folder, output_txt):
                 img_src = bg_element.get_attribute("src")
                 print(f"background Image source (src): {img_src}")
                 #Add image element source to the dictionary
-                image_sources_dict[img_src] = screenshot_path
+                image_sources_dict[img_src] = bg_screenshot_path
                 processed_elements.add(bg_element_identifier)
         except StaleElementReferenceException:
             print("Stale element reference. Skipping...")
@@ -243,3 +243,4 @@ def capture_screenshots(url, folder, output_txt):
     with open(output_txt, 'w') as txt_file:
         for src, src_type in image_sources_dict.items():
             txt_file.write(f"Source URL: {src}, Type: {src_type}\n")
+capture_screenshots("https://www.cnn.com", "images", "output_txt")
