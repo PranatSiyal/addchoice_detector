@@ -1,7 +1,9 @@
 # addchoice_detector
 ## Building ad observatory by collecting ad data from leading websites.
 This code aims to collect advertisements (screenshots, ad urls) to understand the biases that influence advertisers real time bidding strategies on ad exchanges. 
+*** 
 **Methods 1** - get all the image urls from har files and then classify the ads using url filter list.
+***
 **Method 2** - get all the screenshots of images iframes and background images and then run perceptual hashing algorithm to search for adchoice icon. (In US all advertisements are required to display an adchoice icon.) clasify the image as an ad image if adchoice icon is found.
 We try to combine both the methods to collect close to 100% advertisement displayed on a website.
 ### Installation
